@@ -1,0 +1,8 @@
+.venv
+/data
+/scripts/__pycache*
+/yolov5
+/notebbooks/medical-detection
+/notebbooks/medical-products-1
+/runs
+.env
