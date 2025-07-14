@@ -1,202 +1,97 @@
-# 10 Academy: Artificial Intelligence Mastery - Week 7 Challenge
+10 Academy: AI Mastery - Week 7 Challenge
+Project: Ethiopian Medical Business Data Warehouse
+Duration: July 09 – July 15, 2025
 
-## Project: Building a Data Warehouse for Ethiopian Medical Business Data
+Summary
+This project involves developing a data warehouse system for Ethiopian medical business data extracted from Telegram channels. It includes data scraping, cleaning, transformation using DBT, image analysis with YOLO, and API deployment with FastAPI. The final system provides a scalable solution for structured analysis and public access to insights.
 
-**Date:** July 09 - March 15, 2024
+Business Context
+Kara Solutions, a data science company, seeks a centralized system to collect and analyze medical business data from Telegram. The warehouse will enable trend analysis and informed decision-making for clients.
 
-**Overview:**
+Main Tasks
+Data Collection: Scrape text and image data from relevant Telegram channels.
 
-This project focuses on building a data warehouse to store and analyze data related to Ethiopian medical businesses scraped from Telegram channels. The goal is to develop a robust, scalable solution that incorporates data scraping, cleaning, transformation, object detection using YOLO, and data warehousing best practices. This project also exposes the collect data through a fast API
+Data Preparation: Clean and transform the raw data for analysis.
 
-**Business Need:**
+Object Detection: Apply YOLO to detect objects in collected images.
 
-Kara Solutions, a leading data science company, requires a data warehouse to centralize and analyze data on Ethiopian medical businesses. This will enable comprehensive analysis, identification of trends, and improved decision-making for their clients.
+Warehouse Setup: Design and implement a data warehouse to store processed data.
 
-**Core Tasks:**
+Data Integration: Enhance and organize the data in structured formats.
 
-1.  **Data Scraping and Collection Pipeline:** Extract data from relevant Telegram channels.
-2.  **Data Cleaning and Transformation Pipeline:** Clean and transform the scraped data for analysis.
-3.  **Object Detection using YOLO:** Integrate YOLO for object detection in images scraped from Telegram channels.
-4.  **Data Warehouse Design and Implementation:** Design and implement a data warehouse to store the processed data.
-5.  **Data Integration and Enrichment:** Integrate and enrich the data within the data warehouse.
-6.  **Expose the collect data using Fast API.**
+API Development: Use FastAPI to expose the data through a RESTful interface.
 
-## Deliverables:
+Deliverables
+Task 1: Data Scraping
+Goal: Extract data from Telegram channels.
 
-### Task 1: Data Scraping and Collection Pipeline
+Use telethon to connect to public medical-related channels like DoctorsET, lobelia4cosmetics, and others.
 
-**Objective:** Extract data from Telegram channels and store it for further processing.
+Download both textual data and images.
 
-**Steps:**
+Store raw content temporarily.
 
-1.  **Telegram Scraping:**
+Log and monitor scraping activities for debugging and tracking.
 
-    - Utilize the Telegram API (e.g., via `telethon`) or custom scripts to extract data from public Telegram channels relevant to Ethiopian medical businesses.
-    - **Example Channels:**
-      - [https://t.me/DoctorsET](https://t.me/DoctorsET)
-      - Chemed Telegram Channel (Link needed. Assumed to be a channel named "Chemed")
-      - [https://t.me/lobelia4cosmetics](https://t.me/lobelia4cosmetics)
-      - [https://t.me/yetenaweg](https://t.me/yetenaweg)
-      - [https://t.me/EAHCI](https://t.me/EAHCI)
-      - Explore more channels from [https://et.tgstat.com/medicine](https://et.tgstat.com/medicine)
-    - **Tools:**
-      - Python libraries: `telethon` (for Telegram API interaction)
+Task 2: Data Cleaning & Transformation
+Goal: Clean and shape data for warehouse ingestion.
 
-2.  **Image Scraping:**
+Remove duplicates, fill or remove missing values, standardize formats.
 
-    - Collect images from:
-      - Chemed Telegram Channel (Link needed. Assumed to be a channel named "Chemed")
-      - [https://t.me/lobelia4cosmetics](https://t.me/lobelia4cosmetics)
+Store cleaned data in a database (e.g., PostgreSQL).
 
-3.  **Storing Raw Data:**
+Use DBT to define data models and create fact/dimension tables.
 
-    - Store the raw scraped data (text and images) in a temporary storage location (e.g., local database, files).
+Commands include:
 
-4.  **Monitoring and Logging:**
-    - Implement logging to track the scraping process, capture errors, and monitor progress.
+bash
+Copy
+Edit
+dbt run
+dbt test
+dbt docs serve
+Maintain logs to ensure pipeline transparency.
 
-### Task 2: Data Cleaning and Transformation
+Task 3: Object Detection with YOLO
+Goal: Analyze images for object identification.
 
-**Objective:** Clean, transform, and prepare the scraped data for loading into the data warehouse.
+Install YOLO (e.g., YOLOv5 via PyTorch).
 
-**Steps:**
+Load and process images to detect relevant objects.
 
-1.  **Data Cleaning:**
+Example usage:
 
-    - Remove duplicates.
-    - Handle missing values (e.g., imputation, removal).
-    - Standardize formats (e.g., date formats, units of measure).
-    - Data validation to ensure data integrity.
+python
+Copy
+Edit
+model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+results = model('path/to/image.jpg')
+results.save()
+Save results (e.g., bounding boxes, labels) to the database.
 
-2.  **Storing Cleaned Data:**
+Enable error tracking and logging.
 
-    - Store the cleaned data in a database (e.g., PostgreSQL, MySQL).
+Task 4: FastAPI Interface
+Goal: Provide programmatic access to the processed data.
 
-3.  **DBT for Data Transformation:**
+Set up FastAPI with uvicorn, sqlalchemy, and a PostgreSQL driver.
 
-    - **Setting Up DBT:**
-      ```bash
-      pip install dbt-core dbt-postgres # or appropriate adapter
-      dbt init my_project
-      ```
-    - **Defining Models:**
+Project structure:
 
-      - Create DBT models (SQL files) to define transformations on your data (e.g., creating fact and dimension tables).
-      - Example: `models/dim_businesses.sql`
+pgsql
+Copy
+Edit
+├── main.py
+├── database.py
+├── models.py
+├── schemas.py
+└── crud.py
+Run the API:
 
-      ```sql
-      {{ config(materialized='table') }}
-
-      SELECT
-          business_id,
-          business_name,
-          -- other relevant fields
-      FROM {{ source('raw_data', 'businesses') }}
-      ```
-
-    - **Running DBT:**
-      ```bash
-      dbt run
-      ```
-    - **Testing and Documentation:**
-      ```bash
-      dbt test
-      dbt docs generate
-      dbt docs serve
-      ```
-
-4.  **Monitoring and Logging:**
-    - Implement logging to track the transformation process, capture errors, and monitor progress.
-
-### Task 3: Object Detection Using YOLO
-
-**Objective:** Use YOLO to detect objects in images scraped from Telegram channels.
-
-**Steps:**
-
-1.  **Setting Up the Environment:**
-
-    ```bash
-    pip install opencv-python
-    pip install torch torchvision torchaudio  # PyTorch-based YOLO (recommended)
-    # pip install tensorflow  # TensorFlow-based YOLO (alternative)
-    ```
-
-2.  **Downloading the YOLO Model (YOLOv5 example):**
-
-    ```bash
-    git clone https://github.com/ultralytics/yolov5.git
-    cd yolov5
-    pip install -r requirements.txt
-    ```
-
-3.  **Preparing the Data:**
-
-    - Ensure you have images collected from the specified Telegram channels.
-
-4.  **Running Object Detection:**
-
-    - Use the pre-trained YOLO model to detect objects in the images.
-    - Example (using YOLOv5):
-
-      ```python
-      import torch
-
-      # Load the YOLOv5 model
-      model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x
-
-      # Load an image
-      img = 'path/to/your/image.jpg'  # Replace with your image path
-
-      # Perform object detection
-      results = model(img)
-
-      # Print the results
-      results.print()
-
-      # Save results (images with detections)
-      results.save()  # saves in 'runs/detect/exp'
-      ```
-
-5.  **Processing the Detection Results:**
-
-    - Extract relevant data from the detection results, such as bounding box coordinates, confidence scores, and class labels.
-
-6.  **Storing Detection Data:**
-
-    - Store the detection data (image name, bounding box coordinates, confidence scores, class labels) into a database table.
-
-7.  **Monitoring and Logging:**
-    - Implement logging to track the object detection process, capture errors, and monitor progress.
-
-### Task 4: Expose the Collected Data using FastAPI
-
-**Objective:** Create a REST API using FastAPI to expose the collected and processed data.
-
-**Steps:**
-
-1.  **Setting Up the Environment:**
-
-    ```bash
-    pip install fastapi uvicorn sqlalchemy psycopg2-binary  #Example database driver
-    ```
-
-2.  **Project Structure (Example):**
-
-    ```
-    my_project/
-    ├── main.py
-    ├── database.py
-    ├── models.py
-    ├── schemas.py
-    └── crud.py
-    ```
-
-    **Running the FastAPI application:**
-
-    ```bash
-    uvicorn main:app --reload
-    ```
+bash
+Copy
+Edit
+uvicorn main:app --reload
 
 ## Conclusion:
 
